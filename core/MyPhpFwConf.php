@@ -120,6 +120,10 @@ class MyPhpFwConf
         self::$BLADE_COMPILED_PATH = BLADE_COMPILED_PATH;
         self::$SITE_KEY = SITE_KEY;
         self::$LOG_FILENAME = LOG_FILENAME;
+        self::$ROUTE_LOGIN = ROUTE_LOGIN;
+        self::$ROUTE_HOME = ROUTE_HOME;
+
+
     }
 
 }

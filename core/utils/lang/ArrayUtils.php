@@ -5,6 +5,14 @@ namespace myphpfw\core\utils\lang;
 class ArrayUtils
 {
 
+    /**
+     * Vérifie si au moins un élément du tableau satisfait la condition spécifiée par la fonction de rappel.
+     *
+     * @param \Closure $lambda La fonction de rappel qui prend un élément du tableau et renvoie un booléen.
+     * @param array $array Le tableau à vérifier.
+     * @return bool Renvoie true si au moins un élément satisfait la condition, false sinon.
+     * @throws \Error Si la fonction de rappel ne renvoie pas un booléen.
+     */
     public static function any(\Closure $lambda, array $array): bool
     {
         foreach ($array as $elt) {
@@ -20,6 +28,14 @@ class ArrayUtils
         return false;
     }
 
+    /**
+     * Trouve le premier élément du tableau qui satisfait la condition spécifiée par la fonction de rappel.
+     *
+     * @param \Closure $lambda La fonction de rappel qui prend un élément du tableau et renvoie un booléen.
+     * @param array $array Le tableau à vérifier.
+     * @return mixed Renvoie le premier élément qui satisfait la condition, ou null si aucun élément ne la satisfait.
+     * @throws \Error Si la fonction de rappel ne renvoie pas un booléen.
+     */
     public static function findOne(\Closure $lambda, array &$array)
     {
         foreach ($array as $elt) {
@@ -35,6 +51,17 @@ class ArrayUtils
         return null;
     }
 
+    /**
+     * Trouve tous les éléments du tableau qui satisfont la condition spécifiée par la fonction de rappel.
+     *
+     * @param \Closure $lambda La fonction de rappel qui prend un élément du tableau et renvoie un booléen.
+     * @param array $array Le tableau à vérifier.
+     * @return array Renvoie un tableau contenant tous les éléments qui satisfont la condition. Cette méthode renvoie
+     *              un nouveau tableau contenant tous les éléments du tableau d'origine qui satisfont la condition
+     *              spécifiée par la fonction de rappel. Les clés du tableau d'origine ne sont pas conservées.
+     *              Les éléments dans le tableau renvoyé sont indexés avec des clés numériques commençant à zéro
+     * @throws \Error Si la fonction de rappel ne renvoie pas un booléen.
+     */
     public static function find(\Closure $lambda, array &$array): array
     {
         $retArray = [];
@@ -51,6 +78,16 @@ class ArrayUtils
         return $retArray;
     }
 
+    /**
+     * Trouve tous les éléments du tableau qui satisfont la condition spécifiée par la fonction de rappel.
+     *
+     * @param \Closure $lambda La fonction de rappel qui prend un élément du tableau et renvoie un booléen.
+     * @param array &$array Le tableau à vérifier. Passé par référence.
+     * @return array Renvoie un tableau contenant tous les éléments qui satisfont la condition. Cette méthode renvoie
+     *              un nouveau tableau contenant tous les éléments du tableau d'origine qui satisfont la condition
+     *              spécifiée par la fonction de rappel. Les clés du tableau d'origine sont conservées.
+     * @throws \Error Si la fonction de rappel ne renvoie pas un booléen.
+     */
     public static function where(\Closure $lambda, array &$array): array
     {
         $retArray = [];
@@ -67,7 +104,8 @@ class ArrayUtils
         return $retArray;
     }
 
-    public static function first(array &$array)
+
+    public static function first(array $array)
     {
         return $array[array_key_first($array)];
     }
@@ -75,11 +113,6 @@ class ArrayUtils
     public static function last(array &$array)
     {
         return $array[array_key_last($array)];
-    }
-
-    public static function skip(array $array, int $nToSkip)
-    {
-        return array_slice($array, $nToSkip);
     }
 
     public static function skipThenTake(array $array, int $nToSkip, int $nToTake)
@@ -95,6 +128,11 @@ class ArrayUtils
     public static function takeAndSkip(array $array, int $nToTake, int $nToSkip)
     {
         return self::skip(array_slice($array, 0, $nToTake), $nToSkip);
+    }
+
+    public static function skip(array $array, int $nToSkip)
+    {
+        return array_slice($array, $nToSkip);
     }
 
     public static function toStdClass(array $navBarLink)
@@ -123,11 +161,7 @@ class ArrayUtils
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-    /**
-     * @param string $key
-     * @param array $array
-     * @return mixed|null
-     */
+
     public static function tryGet(string $key, array $array, $dftValue = null)
     {
         if (key_exists($key, $array)) {
@@ -172,7 +206,7 @@ class ArrayUtils
      * @param $rep
      * @return bool
      */
-    public static function inArrayMultipleVal(array $array, $rep) : bool
+    public static function inArrayMultipleVal(array $array, $rep): bool
     {
         foreach ($array as $a) {
             if (!in_array($a, $rep)) {
@@ -182,7 +216,8 @@ class ArrayUtils
         return true;
     }
 
-    public static function implodeAssoc($glue, $array, $template = "%s: %s" ) {
+    public static function implodeAssoc($glue, $array, $template = "%s: %s")
+    {
         $result = '';
 
         foreach ($array as $key => $value) {
@@ -195,6 +230,12 @@ class ArrayUtils
         return $result;
     }
 
+    /**
+     * Ajoute les éléments d'un tableau à un autre tableau.
+     *
+     * @param array $subArray Le tableau dont les éléments doivent être ajoutés.
+     * @param array &$targetArray Le tableau auquel les éléments doivent être ajoutés. Passé par référence.
+     */
     public static function addRange(array $subArray, array &$targetArray)
     {
         foreach ($subArray as $elt) {
