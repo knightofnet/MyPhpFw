@@ -42,8 +42,8 @@ class MyPhpFwConf
      */
     public static function initConf(bool $isLoadFromConstant = true)
     {
-        if(!defined('SRV_ROOT')){
-            throw new \Exception("La constante SRV_ROOT n'est pas défini");
+        if(!defined('SVR_ROOT')){
+            throw new \Exception("La constante SVR_ROOT n'est pas défini");
         }
 
         if ($isLoadFromConstant) {
