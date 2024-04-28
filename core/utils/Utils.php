@@ -1,0 +1,262 @@
+<?php
+
+namespace php\core\utils;
+
+use php\core\App;
+use php\core\utils\lang\StringUtils;
+
+class Utils
+{
+
+    public static bool $isLogEcho = false;
+
+    /**
+     * require_once_dir
+     * @param string $serveur_dir le dossier serveur dont il faut inclure les fichiers php fils.
+     * @return void
+     */
+    public static function require_once_dir(string $serveur_dir, array $ignoredFilesName)
+    {
+        $files = scandir($serveur_dir);
+        $serveur_dir = rtrim($serveur_dir, '/\\');
+        //var_dump($serveur_dir);
+        foreach ($files as $file) {
+            if ("." == $file || ".." == $file) continue;
+            $fullPath = $serveur_dir . '/' . $file;
+            if (is_dir($fullPath)) {
+                self::require_once_dir($fullPath);
+            } else if (substr($fullPath, -4) == ".php") {
+                $doRequire = true;
+                foreach ($ignoredFilesName as $ignoredFileName) {
+                    if (StringUtils::str_ends_with($fullPath, $ignoredFileName)) {
+                        $doRequire = false;
+                        break;
+                    }
+                }
+
+                if ($doRequire) {
+                    require_once($fullPath);
+                }
+            }
+        }
+    }
+
+    public static function result404(string $step = "")
+    {
+        http_response_code(404);
+    }
+
+    public static function result200()
+    {
+        http_response_code(200);
+    }
+
+    public static function log(...$whats)
+    {
+        try {
+            foreach ($whats as $what) {
+                $autoLvl = LOGLVL_INFO;
+                if ($what instanceof \Throwable) {
+                    $autoLvl = LOGLVL_ERROR;
+                }
+                $str = "";
+                if (is_string($what)) {
+                    $str = $what;
+                } else {
+                    $str = json_encode($what);
+                }
+
+                $logPrefix = "DEBUG:";
+                switch ($autoLvl) {
+                    case LOGLVL_INFO :
+                        self::logInfo($str);
+                        break;
+                    case LOGLVL_WARN :
+                        self::logWarn($str);
+                        break;
+                    case LOGLVL_ERROR :
+                        self::logError($str);
+                        break;
+                    case LOGLVL_DEBUG :
+                        self::logDebug($str);
+                }
+
+
+            }
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+            throw $ex;
+        }
+    }
+
+    public static function logDebug(...$msgs)
+    {
+        if (APP_LOG_LVL >= LOGLVL_DEBUG)
+            self::logGen("DEBUG:", $msgs);
+    }
+
+    public static function logInfo(...$msgs)
+    {
+        if (APP_LOG_LVL >= LOGLVL_INFO)
+            self::logGen("INFO :", $msgs);
+    }
+
+    public static function logWarn(...$msgs)
+    {
+        if (APP_LOG_LVL >= LOGLVL_WARN)
+            self::logGen("WARN :", $msgs);
+    }
+
+    public static function logError(...$msgs)
+    {
+        if (APP_LOG_LVL >= LOGLVL_ERROR)
+            self::logGen("ERROR:", $msgs);
+    }
+
+    private static function logGen($prefix, $msgs)
+    {
+        foreach ($msgs as $msg) {
+            $str = "";
+            if (is_null($msg)) {
+                $str = "NULL";
+            } elseif (is_string($msg)) {
+                $str = $msg;
+            } elseif (is_int($msg) || is_float($msg)) {
+                $str = strval($msg);
+            } else {
+                $str = json_encode($msg);
+            }
+
+            error_log(date("d-m-Y-H:i-s") . ':' . $prefix . $str . "\n", 3, dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME);
+        }
+    }
+
+
+
+    public static function logOld(...$whats)
+    {
+        try {
+            if (count($whats) > 1) {
+
+                file_put_contents(
+                    dirname($_SERVER['DOCUMENT_ROOT']) . '/'. LOG_FILENAME,
+                    "#---- START ---- #" . "\n", FILE_APPEND);
+            }
+            foreach ($whats as $what) {
+                $str = "";
+                if (is_string($what)) {
+                    $str = $what;
+                } else {
+                    ob_start();
+                    var_dump($what);
+                    $str = ob_get_clean();
+                }
+
+                $str = sprintf("%s : %s", date("d-m-Y-H-i-s"), $str);
+
+                if (self::$isLogEcho) {
+                    echo $str . "\n";
+                }
+
+                file_put_contents(
+                    dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME,
+                    $str . "\n", FILE_APPEND
+                );
+            }
+
+            file_put_contents(
+                dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME,
+                "#---- _END_ ---- #" . "\n", FILE_APPEND);
+
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+            throw $ex;
+        } finally {
+
+        }
+    }
+
+    public static function rotateLogFile($filePath) {
+        $maxSize = 1 * 1024 * 1024; // 1 Mo
+
+        if (!file_exists($filePath)) {
+            return true;
+        }
+
+        if (filesize($filePath) >= $maxSize) {
+            $backupPath = $filePath . '.' . date("Ymd-His");
+
+            if (rename($filePath, $backupPath)) {
+                file_put_contents($filePath, '');
+
+                return $backupPath;
+            }
+        }
+
+        return false;
+    }
+
+    private static array $sizes = ["o", "ko", "Mo", "Go", "To"];
+
+    public static function humanReadableSize(int $size, string $format = "{0:0.##} {1}"): string
+    {
+        $len = $size;
+        $order = 0;
+        while ($len >= 1024 && $order < count(self::$sizes) - 1) {
+            $order++;
+            $len = $len / 1024;
+        }
+
+
+        return sprintf("%.2f %s", $len, self::$sizes[$order]);
+
+    }
+
+    public static function &getStringFromArrayOrDefault(string $arrayKey, array &$array, ?object $dftVal = null)
+    {
+        if (key_exists($arrayKey, $array)) {
+            return $array[$arrayKey];
+        }
+        return $dftVal;
+    }
+
+    public static function getBoolFromArrayOrDefault(string $arrayKey, array $array, bool $dftVal = false): bool
+    {
+        if (key_exists($arrayKey, $array)) {
+            return $array[$arrayKey];
+        }
+        return $dftVal;
+    }
+
+    public static function getEnvFile(string $filePath)
+    {
+
+        //define("APP_ENV", "DEV");
+
+        $charSep = "/";
+        if (StringUtils::indexOf($filePath, $charSep) == -1) {
+            $charSep = "\\";
+        }
+
+        $pathSegments = explode($charSep, $filePath);
+        $fileName = array_pop($pathSegments);
+
+        $filenameSegments = [$fileName];
+        if (StringUtils::indexOf($fileName, ".")) {
+            $filenameSegments = explode(".", $fileName);
+        }
+
+        $newfileName = $filenameSegments[0] . "_" . APP_ENV;
+        if (count($filenameSegments) > 1) {
+            for ($i = 1; $i < count($filenameSegments); $i++) {
+                $newfileName .= "." . $filenameSegments[$i];
+            }
+        }
+
+        $pathSegments[] = $newfileName;
+
+        return implode($charSep, $pathSegments);
+
+    }
+
+}

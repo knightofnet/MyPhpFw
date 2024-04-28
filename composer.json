@@ -1,0 +1,17 @@
+{
+    "name": "wolfaryx/myphpfw",
+    "description": "A small attempt to do a simple fw php",
+	"license": "MIT",
+    "require": {
+        "php": ">=7.4",
+		"doctrine/orm": "^2.11.0",
+		"doctrine/dbal": "^3.2",
+		"symfony/yaml": "^5.4",
+		"symfony/cache": "^5.4",
+		"doctrine/annotations" : "2.0.0",
+		"ext-json": "*",
+		"ext-curl": "*",
+		"eftec/bladeone" : "4.7.1",
+		"ext-openssl": "*"
+    }
+}
