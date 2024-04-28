@@ -33,8 +33,7 @@ class MyPhpFwConf
 
 
     public static ?string $LOG_FILENAME = null;
-    public static $ROUTE_LOGIN = null;
-    public static $ROUTE_HOME = null;
+
 
 
     /**
@@ -95,12 +94,6 @@ class MyPhpFwConf
             throw new \Exception("LOG_FILENAME n'est pas défini dans MyPhpFwConf");
         }
 
-        if (is_null(self::$ROUTE_LOGIN)) {
-            throw new \Exception("ROUTE_LOGIN n'est pas défini dans MyPhpFwConf");
-        }
-        if (is_null(self::$ROUTE_HOME)) {
-            throw new \Exception("ROUTE_HOME n'est pas défini dans MyPhpFwConf");
-        }
 
     }
 
@@ -120,8 +113,7 @@ class MyPhpFwConf
         self::$BLADE_COMPILED_PATH = BLADE_COMPILED_PATH;
         self::$SITE_KEY = SITE_KEY;
         self::$LOG_FILENAME = LOG_FILENAME;
-        self::$ROUTE_LOGIN = ROUTE_LOGIN;
-        self::$ROUTE_HOME = ROUTE_HOME;
+
 
 
     }
