@@ -13,5 +13,10 @@
 		"ext-curl": "*",
 		"eftec/bladeone" : "4.7.1",
 		"ext-openssl": "*"
-    }
+    },
+	"autoload": {
+		"psr-4": {
+			"myphpfw\\core\\": "core"
+		}
+	}
 }

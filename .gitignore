@@ -1,9 +1,9 @@
 bin
-obj
 .vs
 /packages
 cj/
 view/c
+.idea
 
 CharonFiles/vendor/
 
