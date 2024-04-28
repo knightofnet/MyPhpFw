@@ -3,6 +3,7 @@
 namespace myphpfw\core\obj;
 
 use myphpfw\core\App;
+use myphpfw\core\MyPhpFwConf;
 use myphpfw\core\utils\Utils;
 
 class JsonReturnObj
@@ -52,7 +53,7 @@ class JsonReturnObj
     public function addDebug(string $msg): JsonReturnObj
     {
         try {
-            if (IS_DEBUG || App::$sessionObj->userConnexion()->getUserId() == 1) {
+            if (MyPhpFwConf::$IS_DEBUG || App::$sessionObj->userConnexion()->getUserId() == 1) {
                 $dateStr = new \DateTime('now');
                 $key = $dateStr->format("d-m-Y-H-i-s");
 
@@ -80,7 +81,7 @@ class JsonReturnObj
         ];
 
         try {
-            if (IS_DEBUG || App::$sessionObj->userConnexion()->getUserId() == 1) {
+            if (MyPhpFwConf::$IS_DEBUG || App::$sessionObj->userConnexion()->getUserId() == 1) {
                 $arrRet['debug'] = $this->debugLines;
             }
         } catch (\Exception $ex) {

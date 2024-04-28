@@ -10,7 +10,7 @@ class DateUtils
     /**
      * Tableau des mois
      */
-    private static $monthsEnToFr = array(
+    private static array $monthsEnToFr = array(
         "January" => "Janvier",
         "February" => "Février",
         "March" => "Mars",
@@ -28,7 +28,7 @@ class DateUtils
     /**
      * Tableau des jours
      */
-    private static $daysEnToFr = array(
+    private static array $daysEnToFr = array(
         "Monday" => "Lundi",
         "Tuesday" => "Mardi",
         "Wednesday" => "Mercredi",

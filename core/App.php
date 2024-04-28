@@ -29,12 +29,27 @@ class App
     public static ?string $currentRoute = null;
 
     private static string $appVerb = "action";
+
+    /**
+     * @var array $RoutesGet : array associatif de routes GET
+     */
     public static array $RoutesGet = [];
+
+    /**
+     * @var array $RoutesPost : array associatif de routes POST
+     */
     public static array $RoutesPost = [];
     public static array $taskCronToDo = [];
 
     public static ?SessionObj $sessionObj = null;
 
+    /**
+     * Méthode principale de lancement
+     *
+     * @param string $verb
+     * @return void
+     * @throws Throwable
+     */
     public static function run(string $verb = "action")
     {
         self::$appVerb = $verb;
@@ -49,7 +64,7 @@ class App
 
 
         try {
-            Utils::rotateLogFile(dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME);
+            Utils::rotateLogFile(dirname($_SERVER['DOCUMENT_ROOT']) . '/'.MyPhpFwConf::$LOG_FILENAME);
 
             $method = $_SERVER['REQUEST_METHOD'];
             $action = self::getAction($method);
@@ -58,7 +73,7 @@ class App
                 throw new \InvalidArgumentException("Aucune action définie");
             }
 
-            session_name(INNER_SITE_NAME);
+            session_name(MyPhpFwConf::$INNER_SITE_NAME);
             session_start();
             self::$sessionObj = new SessionObj();
             self::$sessionObj->setMethod($method);
@@ -78,9 +93,7 @@ class App
                     self::doPost($routeDetails, $action);
                 }
             }
-        } catch (Error $e) {
-            self::catchErrorAndException($e);
-        } catch (\Exception $e) {
+        } catch (Error|\Exception $e) {
             self::catchErrorAndException($e);
         }
     }
@@ -103,7 +116,7 @@ class App
             }
         }
         Utils::logDebug("getArray", $_GET);
-        if (!empty(SITE_PREFIX_URL)) {
+        if (!empty(MyPhpFwConf::$SITE_PREFIX_URL)) {
             preg_match_all('/([^?=&]+)(=([^&]*))/', $getArray[self::$appVerb], $matches);
             $params = array();
             for ($i = 0; $i < count($matches[1]); $i++) {
@@ -369,7 +382,7 @@ class App
                 $e->getFile(),
                 $e->getLine()
             );
-            error_log($errorMessage, 3, dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME);
+            error_log($errorMessage, 3, dirname($_SERVER['DOCUMENT_ROOT']) . '/'.MyPhpFwConf::$LOG_FILENAME);
         } else {
         */
         Utils::logError("Erreur(Exception) fatale : ", $e->getMessage(), $e->getFile(), $e->getLine(), ArrayUtils::take($e->getTrace(), 15));
@@ -380,7 +393,7 @@ class App
             $prev = $prev->getPrevious();
 
         }
-        if (IS_DEBUG) {
+        if (MyPhpFwConf::$IS_DEBUG) {
             throw $e;
         }
         /*

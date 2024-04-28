@@ -3,11 +3,24 @@
 namespace myphpfw\core\utils;
 
 use myphpfw\core\App;
+use myphpfw\core\MyPhpFwConf;
 use myphpfw\core\obj\UrlActionRes;
 
 class RoutesUtils
 {
 
+    /**
+     * Hydrate les détails de la route à partir de l'action URL
+     *
+     * Cette méthode statique est utilisée pour hydrater les détails de la route à partir de l'action URL.
+     * Elle utilise des expressions régulières pour extraire les variables de l'URL et les stocke dans l'objet de détails de la route.
+     *
+     * @param UrlActionRes &$routeDetailsToHydrate L'objet de détails de la route à hydrater.
+     * @param string $routeName Le nom de la route.
+     * @param string $urlAction L'action URL.
+     * @param callable $routeActionFn La fonction d'action de la route.
+     * @return void
+     */
     public static function hydrateRouteDetailsFromUrlAction(UrlActionRes &$routeDetailsToHydrate, $routeName, $urlAction, $routeActionFn)
     {
         if (0 !== preg_match_all('/(?\'var\'{{(?\'nameVar\'\w+?)}})/m', $routeName, $matches, PREG_SET_ORDER, 0)) {
@@ -41,10 +54,22 @@ class RoutesUtils
 
     }
 
+    /**
+     * Obtient l'URL de la route
+     *
+     * Cette méthode statique est utilisée pour obtenir l'URL de la route.
+     * Elle lance une exception si la route est inconnue.
+     *
+     * @param string $routeName Le nom de la route.
+     * @param array $routeParams Les paramètres de la route.
+     * @param array $urlArgs Les arguments de l'URL.
+     * @return string L'URL de la route.
+     * @throws \Exception Si la route est inconnue.
+     */
     public static function getRouteUrlNoArray(string $routeName, string ...$routeParams)
     {
         if (count($routeParams) % 2 != 0) {
-            throw new \Exception("getRouteUrlNoArray : parametre $routeParams doit etre pair : clef => valeur");
+            throw new \Exception('getRouteUrlNoArray : parametre $routeParams doit etre pair : clef => valeur');
         }
         $routeParamsArgs = [];
         $key = null;
@@ -61,10 +86,16 @@ class RoutesUtils
     }
 
     /**
-     * @param string $routeName
-     * @param array $routeParams
-     * @return string
-     * @throws \Exception
+     * Obtient l'URL de la route
+     *
+     * Cette méthode statique est utilisée pour obtenir l'URL de la route.
+     * Elle lance une exception si la route est inconnue.
+     *
+     * @param string $routeName Le nom de la route.
+     * @param array $routeParams Les paramètres de la route.
+     * @param array $urlArgs Les arguments de l'URL.
+     * @return string L'URL de la route.
+     * @throws \Exception Si la route est inconnue.
      */
     public static function getRouteUrl(string $routeName, array $routeParams = [], array $urlArgs = [])
     {
@@ -97,8 +128,8 @@ class RoutesUtils
             $strUrlArgs = implode('&', $tmpUrlArgs);
         }
 
-        $mainUrl = URL_ROOT . "/" . SITE_PREFIX_URL . $routeName ;
-        if (strpos($mainUrl, "?", strlen(URL_ROOT)) > -1) {
+        $mainUrl = MyPhpFwConf::$URL_ROOT . "/" . MyPhpFwConf::$SITE_PREFIX_URL . $routeName ;
+        if (strpos($mainUrl, "?", strlen(MyPhpFwConf::$URL_ROOT)) > -1) {
             $mainUrl .= '&' . $strUrlArgs;
         } else {
             $mainUrl .= '?' .$strUrlArgs;

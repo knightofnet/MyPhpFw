@@ -3,12 +3,14 @@
 namespace myphpfw\core\utils;
 
 use myphpfw\core\App;
+use myphpfw\core\MyPhpFwConf;
 use myphpfw\core\utils\lang\StringUtils;
 
 class Utils
 {
 
     public static bool $isLogEcho = false;
+    private static array $sizes = ["o", "ko", "Mo", "Go", "To"];
 
     /**
      * require_once_dir
@@ -89,30 +91,23 @@ class Utils
         }
     }
 
-    public static function logDebug(...$msgs)
-    {
-        if (APP_LOG_LVL >= LOGLVL_DEBUG)
-            self::logGen("DEBUG:", $msgs);
-    }
-
     public static function logInfo(...$msgs)
     {
-        if (APP_LOG_LVL >= LOGLVL_INFO)
+        if (MyPhpFwConf::$APP_LOG_LVL >= LOGLVL_INFO)
             self::logGen("INFO :", $msgs);
     }
 
-    public static function logWarn(...$msgs)
-    {
-        if (APP_LOG_LVL >= LOGLVL_WARN)
-            self::logGen("WARN :", $msgs);
-    }
-
-    public static function logError(...$msgs)
-    {
-        if (APP_LOG_LVL >= LOGLVL_ERROR)
-            self::logGen("ERROR:", $msgs);
-    }
-
+    /**
+     * Méthode logGen
+     *
+     * Cette méthode privée est utilisée pour générer des logs avec un préfixe spécifique et un ensemble de messages.
+     * Elle parcourt chaque message, détermine son type et le convertit en une chaîne de caractères pour l'enregistrement du log.
+     * Les messages sont ensuite enregistrés dans un fichier de log avec une date et un préfixe.
+     *
+     * @param string $prefix Le préfixe à ajouter au début de chaque message de log.
+     * @param array $msgs Un tableau de messages à enregistrer dans le log.
+     * @return void
+     */
     private static function logGen($prefix, $msgs)
     {
         foreach ($msgs as $msg) {
@@ -127,11 +122,27 @@ class Utils
                 $str = json_encode($msg);
             }
 
-            error_log(date("d-m-Y-H:i-s") . ':' . $prefix . $str . "\n", 3, dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME);
+            error_log(date("d-m-Y-H:i-s") . ':' . $prefix . $str . "\n", 3, dirname($_SERVER['DOCUMENT_ROOT']) . '/' . MyPhpFwConf::$LOG_FILENAME);
         }
     }
 
+    public static function logWarn(...$msgs)
+    {
+        if (MyPhpFwConf::$APP_LOG_LVL >= LOGLVL_WARN)
+            self::logGen("WARN :", $msgs);
+    }
 
+    public static function logError(...$msgs)
+    {
+        if (MyPhpFwConf::$APP_LOG_LVL >= LOGLVL_ERROR)
+            self::logGen("ERROR:", $msgs);
+    }
+
+    public static function logDebug(...$msgs)
+    {
+        if (MyPhpFwConf::$APP_LOG_LVL >= LOGLVL_DEBUG)
+            self::logGen("DEBUG:", $msgs);
+    }
 
     public static function logOld(...$whats)
     {
@@ -139,7 +150,7 @@ class Utils
             if (count($whats) > 1) {
 
                 file_put_contents(
-                    dirname($_SERVER['DOCUMENT_ROOT']) . '/'. LOG_FILENAME,
+                    dirname($_SERVER['DOCUMENT_ROOT']) . '/' . MyPhpFwConf::$LOG_FILENAME,
                     "#---- START ---- #" . "\n", FILE_APPEND);
             }
             foreach ($whats as $what) {
@@ -159,13 +170,13 @@ class Utils
                 }
 
                 file_put_contents(
-                    dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME,
+                    dirname($_SERVER['DOCUMENT_ROOT']) . '/' . MyPhpFwConf::$LOG_FILENAME,
                     $str . "\n", FILE_APPEND
                 );
             }
 
             file_put_contents(
-                dirname($_SERVER['DOCUMENT_ROOT']) . '/'.LOG_FILENAME,
+                dirname($_SERVER['DOCUMENT_ROOT']) . '/' . MyPhpFwConf::$LOG_FILENAME,
                 "#---- _END_ ---- #" . "\n", FILE_APPEND);
 
         } catch (\Throwable $ex) {
@@ -176,14 +187,18 @@ class Utils
         }
     }
 
-    public static function rotateLogFile($filePath) {
-        $maxSize = 1 * 1024 * 1024; // 1 Mo
+    /**
+     * Méthode rotateLogFile
+     * Cette méthode est utilisée pour faire tourner les fichiers de log.
+     *
+     * @param $filePath
+     * @return bool|string
+     */
+    public static function rotateLogFile($filePath)
+    {
+        $maxSize = 1024 * 1024; // 1 Mo
 
-        if (!file_exists($filePath)) {
-            return true;
-        }
-
-        if (filesize($filePath) >= $maxSize) {
+        if (file_exists($filePath) && filesize($filePath) >= $maxSize) {
             $backupPath = $filePath . '.' . date("Ymd-His");
 
             if (rename($filePath, $backupPath)) {
@@ -195,8 +210,6 @@ class Utils
 
         return false;
     }
-
-    private static array $sizes = ["o", "ko", "Mo", "Go", "To"];
 
     public static function humanReadableSize(int $size, string $format = "{0:0.##} {1}"): string
     {

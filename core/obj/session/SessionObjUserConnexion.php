@@ -3,6 +3,7 @@
 namespace myphpfw\core\obj\session;
 
 use Doctrine\ORM\EntityManager;
+use myphpfw\core\MyPhpFwConf;
 use myphpfw\core\utils\lang\StringUtils;
 use myphpfw\core\utils\Utils;
 
@@ -54,7 +55,7 @@ class SessionObjUserConnexion
             return null;
         }
 
-        $ret = $em->getRepository(USER_CLASS)->findOneBy(["id" => $this->getUserId(), "userApiToken" => $this->getUserApiKey()]);
+        $ret = $em->getRepository(MyPhpFwConf::$USER_CLASS)->findOneBy(["id" => $this->getUserId(), "userApiToken" => $this->getUserApiKey()]);
         if ($ret == null) {
             $this->disconnect();
         }
@@ -73,7 +74,7 @@ class SessionObjUserConnexion
 
         session_destroy();
 
-        session_name(INNER_SITE_NAME);
+        session_name(MyPhpFwConf::$INNER_SITE_NAME);
         session_start();
 
     }

@@ -4,9 +4,10 @@ namespace myphpfw\core\module\login;
 
 use Doctrine\ORM\EntityManager;
 use eftec\bladeone\BladeOne;
-use php\app\modules\common\entities\User;
-use php\app\modules\common\MainTplBladeObj;
-use php\app\Runner;
+use myphpfw\core\module\IUserFw;
+use myphpfw\core\MyPhpFwConf;
+
+
 use myphpfw\core\App;
 use myphpfw\core\obj\JsonReturnObj;
 use myphpfw\core\obj\ResponseHttp;
@@ -14,7 +15,7 @@ use myphpfw\core\obj\session\SessionObj;
 use myphpfw\core\utils\lang\ArrayUtils;
 use myphpfw\core\utils\lang\StringUtils;
 use myphpfw\core\utils\RoutesUtils;
-use myphpfw\core\utils\TemplateEngine;
+
 use myphpfw\core\utils\Utils;
 
 class LoginControler
@@ -26,10 +27,17 @@ class LoginControler
 
     protected array $tplVars = [];
 
+
+
+
+
+
     public function __construct(EntityManager $entityManager)
     {
+
+
         $this->entityManager = $entityManager;
-        $this->bladeOne = new BladeOne(SVR_ROOT . "/view/b", BLADE_COMPILED_PATH, IS_DEBUG ? BladeOne::MODE_DEBUG : BladeOne::MODE_AUTO);;
+        $this->bladeOne = new BladeOne(SVR_ROOT . "/view/b", MyPhpFwConf::$BLADE_COMPILED_PATH, MyPhpFwConf::$IS_DEBUG ? BladeOne::MODE_DEBUG : BladeOne::MODE_AUTO);;
 
         $this->bladeOne->directive("getRouteUrl", [RoutesUtils::class, "getRouteUrlNoArray"]);
         $this->bladeOne->pipeEnable = true;
@@ -46,7 +54,7 @@ class LoginControler
         setcookie("siteConnected", "", -1);
 
 
-        return ResponseHttp::RedirectTo(RoutesUtils::getRouteUrl(Runner::ROUTE_LOGIN));
+        return ResponseHttp::RedirectTo(RoutesUtils::getRouteUrl( MyPhpFwConf::$ROUTE_LOGIN));
 
     }
 
@@ -58,19 +66,19 @@ class LoginControler
         $cookieIfExists = ArrayUtils::tryGet("siteConnected", $_COOKIE);
         if ($cookieIfExists != null) {
             try {
-                $strJsonDecrypted = StringUtils::decryptWithXor($cookieIfExists, SITE_KEY);
+                $strJsonDecrypted = StringUtils::decryptWithXor($cookieIfExists, MyPhpFwConf::$SITE_KEY);
                 $arr = json_decode($strJsonDecrypted);
                 $currentPcId = $this->getComputerId();
                 $potUserName = $arr[0];
                 $potPwd = $arr[1];
                 $potPcId = $arr[2];
                 //$potUserName = substr($potUserName,0, -64);
-                /** @var User $user */
+                /** @var IUserFw $user */
                 $user = $this->entityManager
-                    ->getRepository(User::class)
+                    ->getRepository(MyPhpFwConf::$USER_CLASS)
                     ->findOneBy(["nom" => $potUserName]);
                 if ($potPcId == $currentPcId && $user != null) {
-                    $routeToRedirect = Runner::ROUTE_HOME;
+                    $routeToRedirect = MyPhpFwConf::$ROUTE_HOME;
                     if (key_exists('redirect', $_GET)) {
                         $routeToRedirect = urldecode($_GET['redirect']);
                     }
@@ -90,7 +98,7 @@ class LoginControler
         }
 
         $this->tplVars["title"] = "Login";
-        $this->tplVars["urlRoot"] = URL_ROOT;
+        $this->tplVars["urlRoot"] = MyPhpFwConf::$URL_ROOT;
         $this->tplVars["ref_url"] = $referrer != null ? base64_encode($referrer) : "";
         $this->tplVars["valueLogin"] = ArrayUtils::tryGet("idUser", $_GET, "");
 
@@ -108,17 +116,17 @@ class LoginControler
 
         // connexion
 
-        /** @var User $user */
+        /** @var IUserFw $user */
         $user = $this->entityManager
-            ->getRepository(User::class)
+            ->getRepository(MyPhpFwConf::$USER_CLASS)
             ->findOneBy(["nom" => $formUsername]);
         if ($user == null) {
             return ResponseHttp::RedirectTo(RoutesUtils::getRouteUrl($routeToRedirect));
         }
 
-        if (password_verify($formPwd, $user->getMotDePasse())) {
+        if (password_verify($formPwd, $user->getPassword())) {
 
-            $user->setMotDePasse(password_hash($formPwd, CRYPT_BLOWFISH));
+            $user->setPassword(password_hash($formPwd, CRYPT_BLOWFISH));
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
@@ -133,7 +141,7 @@ class LoginControler
                 $arr = [$formUsername, $formPwd, $this->getComputerId()];
                 setcookie("siteConnected",
                     StringUtils::encryptWithXor(
-                        json_encode($arr), SITE_KEY),
+                        json_encode($arr), MyPhpFwConf::$SITE_KEY),
                     $cookie_expiration_time);
             }
         }

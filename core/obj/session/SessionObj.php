@@ -2,8 +2,9 @@
 
 namespace myphpfw\core\obj\session;
 
+use myphpfw\core\MyPhpFwConf;
 use myphpfw\core\utils\Utils;
-use PHPUnit\Util\Exception;
+
 
 class SessionObj
 {
@@ -113,7 +114,7 @@ class SessionObj
     }
 
     public static function resetSession() : void {
-        session_name(INNER_SITE_NAME);
+        session_name(MyPhpFwConf::$INNER_SITE_NAME);
         session_start();
     }
 
