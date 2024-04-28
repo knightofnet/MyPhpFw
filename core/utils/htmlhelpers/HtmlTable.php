@@ -1,6 +1,6 @@
 <?php
 
-namespace php\core\utils\htmlhelpers;
+namespace myphpfw\core\utils\htmlhelpers;
 
 abstract class  HtmlTable extends HtmlListable
 {

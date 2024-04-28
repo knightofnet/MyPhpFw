@@ -1,10 +1,10 @@
 <?php
 
-namespace php\core\utils;
+namespace myphpfw\core\utils;
 
 use php\app\entities\ResourceDto;
 use php\app\modules\common\RessourcesFromServer;
-use php\core\obj\CurlConfig;
+use myphpfw\core\obj\CurlConfig;
 
 class CurlUtils
 {

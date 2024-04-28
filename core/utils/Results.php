@@ -1,6 +1,6 @@
 <?php
 
-namespace php\core\utils;
+namespace myphpfw\core\utils;
 
 class Results
 {

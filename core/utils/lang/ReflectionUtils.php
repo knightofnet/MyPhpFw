@@ -1,9 +1,9 @@
 <?php
 
-namespace php\core\utils\lang;
+namespace myphpfw\core\utils\lang;
 
-use php\core\obj\ReflectionToCallMethod;
-use php\core\utils\Utils;
+use myphpfw\core\obj\ReflectionToCallMethod;
+use myphpfw\core\utils\Utils;
 
 class ReflectionUtils
 {
@@ -157,7 +157,7 @@ class ReflectionUtils
 
     public static function getConstantesOfClass(string $class): array
     {
-        // Utilisez la réflexion (ReflectionClass) pour obtenir les constantes de la classe
+        // Utilisez la rï¿½flexion (ReflectionClass) pour obtenir les constantes de la classe
         $reflection = new ReflectionClass($class);
         $constantes = $reflection->getConstants();
 

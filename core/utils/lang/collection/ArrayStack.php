@@ -1,6 +1,6 @@
 <?php
 
-namespace php\core\utils\lang\collection;
+namespace myphpfw\core\utils\lang\collection;
 
 class ArrayStack
 {

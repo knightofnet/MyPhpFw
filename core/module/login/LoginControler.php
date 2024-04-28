@@ -1,21 +1,21 @@
 <?php
 
-namespace php\core\module\login;
+namespace myphpfw\core\module\login;
 
 use Doctrine\ORM\EntityManager;
 use eftec\bladeone\BladeOne;
 use php\app\modules\common\entities\User;
 use php\app\modules\common\MainTplBladeObj;
 use php\app\Runner;
-use php\core\App;
-use php\core\obj\JsonReturnObj;
-use php\core\obj\ResponseHttp;
-use php\core\obj\session\SessionObj;
-use php\core\utils\lang\ArrayUtils;
-use php\core\utils\lang\StringUtils;
-use php\core\utils\RoutesUtils;
-use php\core\utils\TemplateEngine;
-use php\core\utils\Utils;
+use myphpfw\core\App;
+use myphpfw\core\obj\JsonReturnObj;
+use myphpfw\core\obj\ResponseHttp;
+use myphpfw\core\obj\session\SessionObj;
+use myphpfw\core\utils\lang\ArrayUtils;
+use myphpfw\core\utils\lang\StringUtils;
+use myphpfw\core\utils\RoutesUtils;
+use myphpfw\core\utils\TemplateEngine;
+use myphpfw\core\utils\Utils;
 
 class LoginControler
 {

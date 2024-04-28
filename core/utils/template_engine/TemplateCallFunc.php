@@ -1,8 +1,8 @@
 <?php
 
-namespace php\core\utils\template_engine;
+namespace myphpfw\core\utils\template_engine;
 
-use php\core\utils\lang\StringUtils;
+use myphpfw\core\utils\lang\StringUtils;
 
 class TemplateCallFunc
 {

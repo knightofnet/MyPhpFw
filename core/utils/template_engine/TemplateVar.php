@@ -1,11 +1,11 @@
 <?php
 
-namespace php\core\utils\template_engine;
+namespace myphpfw\core\utils\template_engine;
 
-use php\core\utils\lang\ArrayUtils;
-use php\core\utils\lang\ReflectionUtils;
-use php\core\utils\lang\StringUtils;
-use php\core\utils\Utils;
+use myphpfw\core\utils\lang\ArrayUtils;
+use myphpfw\core\utils\lang\ReflectionUtils;
+use myphpfw\core\utils\lang\StringUtils;
+use myphpfw\core\utils\Utils;
 
 class TemplateVar
 {

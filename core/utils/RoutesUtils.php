@@ -1,9 +1,9 @@
 <?php
 
-namespace php\core\utils;
+namespace myphpfw\core\utils;
 
-use php\core\App;
-use php\core\obj\UrlActionRes;
+use myphpfw\core\App;
+use myphpfw\core\obj\UrlActionRes;
 
 class RoutesUtils
 {

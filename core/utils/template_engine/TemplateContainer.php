@@ -1,6 +1,6 @@
 <?php
 
-namespace php\core\utils\template_engine;
+namespace myphpfw\core\utils\template_engine;
 
 class TemplateContainer
 {

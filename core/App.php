@@ -1,19 +1,19 @@
 <?php
 
-namespace php\core;
+namespace myphpfw\core;
 
 use ArgumentCountError;
 use Closure as ClosureAlias;
 use Error;
-use php\core\obj\JsonReturnObj;
-use php\core\obj\ReflectionToCallMethod;
-use php\core\obj\ResponseHttp;
-use php\core\obj\session\SessionObj;
-use php\core\obj\UrlActionRes;
-use php\core\utils\lang\ArrayUtils;
-use php\core\utils\Results;
-use php\core\utils\RoutesUtils;
-use php\core\utils\Utils;
+use myphpfw\core\obj\JsonReturnObj;
+use myphpfw\core\obj\ReflectionToCallMethod;
+use myphpfw\core\obj\ResponseHttp;
+use myphpfw\core\obj\session\SessionObj;
+use myphpfw\core\obj\UrlActionRes;
+use myphpfw\core\utils\lang\ArrayUtils;
+use myphpfw\core\utils\Results;
+use myphpfw\core\utils\RoutesUtils;
+use myphpfw\core\utils\Utils;
 use PhpParser\Node\Expr\Closure;
 use ReflectionFunction;
 use ReflectionProperty;

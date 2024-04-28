@@ -1,6 +1,6 @@
 <?php
 
-namespace php\core\utils\lang;
+namespace myphpfw\core\utils\lang;
 
 class StringUtils
 {

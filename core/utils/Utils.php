@@ -1,9 +1,9 @@
 <?php
 
-namespace php\core\utils;
+namespace myphpfw\core\utils;
 
-use php\core\App;
-use php\core\utils\lang\StringUtils;
+use myphpfw\core\App;
+use myphpfw\core\utils\lang\StringUtils;
 
 class Utils
 {
