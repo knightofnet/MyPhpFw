@@ -11,7 +11,7 @@
 		"doctrine/annotations" : "2.0.0",
 		"ext-json": "*",
 		"ext-curl": "*",
-		"eftec/bladeone" : "4.7.1",
+		"eftec/bladeone" : "4.9.*",
 		"ext-openssl": "*"
     },
 	"autoload": {
