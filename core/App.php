@@ -394,6 +394,48 @@ class App
 
         }
         if (MyPhpFwConf::$IS_DEBUG) {
+            echo '<h1>DEBUG</h1>';
+
+            if (isset($e->xdebug_message)) {
+                echo '<h2>Exception</h2>';
+                echo '<table>';
+                echo $e->xdebug_message;
+                echo '</table>';
+            }
+
+            echo '<h2>Stack</h2>';
+            echo '<table>';
+            foreach ($e->getTrace() as $trace) {
+                echo '<tr>';
+                if (array_key_exists('file', $trace)) {
+                    echo '<td>File</td><td>' . $trace['file'] . '</td>';
+                } else {
+                    echo '<td>File</td><td>unknown</td>';
+                }
+
+                if (array_key_exists('line', $trace)) {
+                    echo '<td>Line</td><td>' . $trace['line'] . '</td>';
+                } else {
+                    echo '<td>Line</td><td>unknown</td>';
+                }
+
+                if (array_key_exists('function', $trace)) {
+                    echo '<td>Function</td><td>' . $trace['function'] . '</td>';
+                } else {
+                    echo '<td>Function</td><td>unknown</td>';
+                }
+
+                if (array_key_exists('class', $trace)) {
+                    echo '<td>Class</td><td>' . $trace['class'] . '</td>';
+                } else {
+                    echo '<td>Class</td><td>unknown</td>';
+                }
+
+                echo '</tr>';
+            }
+            echo '</table>';
+
+            echo '<h2>Exception remontée</h2>';
             throw $e;
         }
         /*
