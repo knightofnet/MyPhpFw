@@ -52,10 +52,13 @@ abstract class AbstractLoginControler
             if ($potPcId == $currentPcId && $user != null) {
 
 
-                return $this->tryDoConnexionOrRegister(
+                return $this->tryDoConnexion(
                     $potUserName,
                     $potPwd,
-                    true
+                    true,
+                    MyPhpFwConf::$USERNAME_FIELD_NAME
+
+
                 );
             }
         } catch (\Exception $ex) {
@@ -63,6 +66,8 @@ abstract class AbstractLoginControler
             setcookie("siteConnected", "", -1);
             Utils::logWarn("Erreur lors de la reconnexion", $ex);
         }
+
+        return false;
     }
 
     private function getComputerId(): string
@@ -70,9 +75,23 @@ abstract class AbstractLoginControler
         return $_SERVER['HTTP_USER_AGENT'] . $_SERVER['REMOTE_ADDR'];
     }
 
-    protected function tryDoConnexionOrRegister(string $formUsername,
-                                                string $formPwd,
-                                                bool   $isRmberMe
+    /**
+     * Tente de connecter l'utilisateur
+     *
+     * @param string $formUsername Le nom d'utilisateur
+     * @param string $formPwd Le mot de passe
+     * @param bool $isRmberMe Si l'utilisateur a coché la case "Se souvenir de moi"
+     * @return bool Vrai si la connexion a réussi, faux sinon
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    protected function tryDoConnexion(string $formUsername,
+                                      string $formPwd,
+                                      bool   $isRmberMe,
+                                        string $fieldName = "username",
+                                        string &$errorMsg = null
+
     ): bool
     {
 
@@ -80,7 +99,7 @@ abstract class AbstractLoginControler
         /** @var IUserFw $user */
         $user = $this->entityManager
             ->getRepository(MyPhpFwConf::$USER_CLASS)
-            ->findOneBy(["nom" => $formUsername]);
+            ->findOneBy([$fieldName => $formUsername]);
 
         // Si l'utilisateur n'existe pas ou que le mot de passe est incorrect
         if ($user == null || !password_verify($formPwd, $user->getPassword())) {
@@ -110,6 +129,32 @@ abstract class AbstractLoginControler
 
         return true;
 
+    }
+
+    protected function tryRegisterNewUser(string $formUsername, string $formPwd, string $fieldName = "username", string &$errorMsg): bool
+    {
+        // On vérifie que l'utilisateur n'existe pas déjà
+        $user = $this->entityManager
+            ->getRepository(MyPhpFwConf::$USER_CLASS)
+            ->findOneBy([$fieldName => $formUsername]);
+        if ($user != null) {
+            $errorMsg = "Cet utilisateur existe déjà";
+            return false;
+        }
+
+        // On crée l'utilisateur
+        $user = new MyPhpFwConf::$USER_CLASS();
+        /** @var IUserFw $user */
+        $user
+            ->setUsername($formUsername)
+            ->setPassword(password_hash($formPwd, CRYPT_BLOWFISH))
+            ->setUserApiToken(StringUtils::generateRandomString(10));
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $errorMsg = null;
+        return true;
     }
 
 

@@ -483,3 +483,4 @@ composer.lock
 *.sass.map
 *.scss.map
 
+/composer_2.phar

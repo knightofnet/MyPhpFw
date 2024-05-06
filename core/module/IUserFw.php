@@ -15,7 +15,18 @@ interface IUserFw
      */
     public function setId($id);
 
-   
+
+    /**
+     * @param string $username
+     * @return IUserFw
+     */
+    public function setUsername(string $username): IUserFw;
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string;
+
     /**
      * @return mixed
      */

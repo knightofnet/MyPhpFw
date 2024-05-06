@@ -16,6 +16,7 @@ class MyPhpFwConf
     public static ?string $INNER_SITE_NAME = null;
 
     public static ?string $USER_CLASS = null;
+    public static ?string $USERNAME_FIELD_NAME = null;
 
     public static ?string $DBB_NAME = null;
 
@@ -75,6 +76,9 @@ class MyPhpFwConf
         if (is_null(self::$USER_CLASS)) {
             throw new \Exception("USER_CLASS n'est pas défini dans MyPhpFwConf");
         }
+        if (is_null(self::$USERNAME_FIELD_NAME)) {
+            throw new \Exception("USERNAME_FIELD_NAME n'est pas défini dans MyPhpFwConf");
+        }
         if (is_null(self::$DBB_NAME)) {
             throw new \Exception("DBB_NAME n'est pas défini dans MyPhpFwConf");
         }
@@ -105,6 +109,7 @@ class MyPhpFwConf
         self::$SITE_NAME = SITE_NAME;
         self::$INNER_SITE_NAME = INNER_SITE_NAME;
         self::$USER_CLASS = USER_CLASS;
+        self::$USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
         self::$DBB_NAME = DBB_NAME;
         self::$DBB_USER = DBB_USER;
         self::$DBB_PWD = DBB_PWD;
