@@ -1,6 +1,7 @@
 {
     "name": "wolfaryx/myphpfw",
     "description": "A small attempt to do a simple fw php",
+	"version": "1.0.0",
 	"license": "MIT",
     "require": {
         "php": ">=7.4",
