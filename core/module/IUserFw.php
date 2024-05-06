@@ -49,9 +49,4 @@ interface IUserFw
      */
     public function setUserApiToken(string $userApiToken): IUserFw;
 
-
-    /**
-     * @return string
-     */
-    public function getUserApiTokenPropertyName() : string;
 }

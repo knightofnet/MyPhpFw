@@ -85,22 +85,24 @@ class MyPhpFwConf
 
         if (is_null(self::$USER_USERNAME_FIELD_NAME)) {
 
+            /** @var null|PropertyLinked $propUniqueIdName */
             $propUniqueIdName = ReflectionUtils::getAnnotationOnMethod(self::$USER_CLASS, "getUsername", PropertyLinked::class);
             if (is_null($propUniqueIdName)) {
                 throw new \Exception("USERNAME_FIELD_NAME n'est pas défini dans MyPhpFwConf ou getUsername n'est pas annoté par PropertyLinked dans la classe " . self::$USER_CLASS);
             }
 
-            self::$USER_USERNAME_FIELD_NAME = $propUniqueIdName->name;
+            self::$USER_USERNAME_FIELD_NAME = $propUniqueIdName->getPropertyName();
 
         }
         if (is_null(self::$USER_USERAPITOKEN_FIELD_NAME)) {
 
+            /** @var null|PropertyLinked $propUniqueIdName */
             $propUniqueIdName = ReflectionUtils::getAnnotationOnMethod(self::$USER_CLASS, "getUserApiToken", PropertyLinked::class);
             if (is_null($propUniqueIdName)) {
                 throw new \Exception("USER_USERAPITOKEN_FIELD_NAME n'est pas défini dans MyPhpFwConf ou getUsername n'est pas annoté par PropertyLinked dans la classe " . self::$USER_CLASS);
             }
 
-            self::$USER_USERAPITOKEN_FIELD_NAME = $propUniqueIdName->name;
+            self::$USER_USERAPITOKEN_FIELD_NAME = $propUniqueIdName->getPropertyName();
 
         }
         if (is_null(self::$DBB_NAME)) {
