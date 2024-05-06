@@ -2,7 +2,7 @@
 
 namespace myphpfw\core\utils\lang;
 
-use myphpfw\core\obj\ReflectionToCallMethod;
+use Doctrine\Common\Annotations\AnnotationReader;
 use myphpfw\core\utils\Utils;
 
 class ReflectionUtils
@@ -39,7 +39,7 @@ class ReflectionUtils
             }
 
             $getterName = "get" . StringUtils::ucFirst($propertyName);
-            if($reflectionClass->hasMethod($getterName)) {
+            if ($reflectionClass->hasMethod($getterName)) {
                 $getterMeth = $reflectionClass->getMethod($getterName);
                 if ($getterMeth->getNumberOfParameters() == 0) {
                     return $getterMeth->invoke($obj);
@@ -112,11 +112,12 @@ class ReflectionUtils
         }
     }
 
-    public static function getProperty($objOrClass, string $propName) : ?\ReflectionProperty {
+    public static function getProperty($objOrClass, string $propName): ?\ReflectionProperty
+    {
         try {
             $reflectionClass = new \ReflectionClass($objOrClass);
             return $reflectionClass->getProperty($propName);
-        } catch (\ReflectionException $e ) {
+        } catch (\ReflectionException $e) {
             Utils::logError($e);
             return null;
         }
@@ -143,7 +144,7 @@ class ReflectionUtils
 
 
             $getterName = "set" . StringUtils::ucFirst($propertyName);
-            if($reflectionClass->hasMethod($getterName)) {
+            if ($reflectionClass->hasMethod($getterName)) {
                 $getterMeth = $reflectionClass->getMethod($getterName);
                 if ($getterMeth->getNumberOfParameters() == 1) {
                     return $getterMeth->invoke($obj, $value);
@@ -157,11 +158,29 @@ class ReflectionUtils
 
     public static function getConstantesOfClass(string $class): array
     {
-        // Utilisez la r�flexion (ReflectionClass) pour obtenir les constantes de la classe
+        // Utilisez la réflexion (ReflectionClass) pour obtenir les constantes de la classe
         $reflection = new ReflectionClass($class);
         $constantes = $reflection->getConstants();
 
         return $constantes;
     }
+
+    /**
+     * Obtient une annotation sur une méthode
+     *
+     * @param string $fullClassName
+     * @param string $methodName
+     * @param string $annotationClassName
+     * @return object|null
+     * @throws \ReflectionException
+     */
+    public static function getAnnotationOnMethod(string $fullClassName, string $methodName, string $annotationClassName): ?object
+    {
+
+        $annotationReader = new AnnotationReader();
+        $rf = new \ReflectionMethod($fullClassName, $methodName);
+        return $annotationReader->getMethodAnnotation($rf, $annotationClassName);
+    }
+
 
 }

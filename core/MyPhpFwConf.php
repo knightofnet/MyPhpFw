@@ -2,6 +2,9 @@
 
 namespace myphpfw\core;
 
+use myphpfw\core\annotation\PropertyLinked;
+use myphpfw\core\utils\lang\ReflectionUtils;
+
 class MyPhpFwConf
 {
 
@@ -16,7 +19,8 @@ class MyPhpFwConf
     public static ?string $INNER_SITE_NAME = null;
 
     public static ?string $USER_CLASS = null;
-    public static ?string $USERNAME_FIELD_NAME = null;
+    public static ?string $USER_USERNAME_FIELD_NAME = null;
+    public static ?string $USER_USERAPITOKEN_FIELD_NAME = null;
 
     public static ?string $DBB_NAME = null;
 
@@ -36,13 +40,12 @@ class MyPhpFwConf
     public static ?string $LOG_FILENAME = null;
 
 
-
     /**
      * @throws \Exception
      */
     public static function initConf(bool $isLoadFromConstant = true)
     {
-        if(!defined('SVR_ROOT')){
+        if (!defined('SVR_ROOT')) {
             throw new \Exception("La constante SVR_ROOT n'est pas défini");
         }
 
@@ -51,7 +54,6 @@ class MyPhpFwConf
         }
 
         self::verifyConf();
-
 
 
     }
@@ -76,8 +78,30 @@ class MyPhpFwConf
         if (is_null(self::$USER_CLASS)) {
             throw new \Exception("USER_CLASS n'est pas défini dans MyPhpFwConf");
         }
-        if (is_null(self::$USERNAME_FIELD_NAME)) {
-            throw new \Exception("USERNAME_FIELD_NAME n'est pas défini dans MyPhpFwConf");
+        // teste que la classe self::$USER_CLASS existe
+        if (!class_exists(self::$USER_CLASS)) {
+            throw new \Exception("La classe " . self::$USER_CLASS . " n'existe pas");
+        }
+
+        if (is_null(self::$USER_USERNAME_FIELD_NAME)) {
+
+            $propUniqueIdName = ReflectionUtils::getAnnotationOnMethod(self::$USER_CLASS, "getUsername", PropertyLinked::class);
+            if (is_null($propUniqueIdName)) {
+                throw new \Exception("USERNAME_FIELD_NAME n'est pas défini dans MyPhpFwConf ou getUsername n'est pas annoté par PropertyLinked dans la classe " . self::$USER_CLASS);
+            }
+
+            self::$USER_USERNAME_FIELD_NAME = $propUniqueIdName->name;
+
+        }
+        if (is_null(self::$USER_USERAPITOKEN_FIELD_NAME)) {
+
+            $propUniqueIdName = ReflectionUtils::getAnnotationOnMethod(self::$USER_CLASS, "getUserApiToken", PropertyLinked::class);
+            if (is_null($propUniqueIdName)) {
+                throw new \Exception("USER_USERAPITOKEN_FIELD_NAME n'est pas défini dans MyPhpFwConf ou getUsername n'est pas annoté par PropertyLinked dans la classe " . self::$USER_CLASS);
+            }
+
+            self::$USER_USERAPITOKEN_FIELD_NAME = $propUniqueIdName->name;
+
         }
         if (is_null(self::$DBB_NAME)) {
             throw new \Exception("DBB_NAME n'est pas défini dans MyPhpFwConf");
@@ -99,6 +123,7 @@ class MyPhpFwConf
         }
 
 
+
     }
 
     private static function loadConfFromConstant()
@@ -109,7 +134,8 @@ class MyPhpFwConf
         self::$SITE_NAME = SITE_NAME;
         self::$INNER_SITE_NAME = INNER_SITE_NAME;
         self::$USER_CLASS = USER_CLASS;
-        self::$USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
+        self::$USER_USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
+        self::$USER_USERAPITOKEN_FIELD_NAME = USER_USERAPITOKEN_FIELD_NAME;
         self::$DBB_NAME = DBB_NAME;
         self::$DBB_USER = DBB_USER;
         self::$DBB_PWD = DBB_PWD;
@@ -118,7 +144,6 @@ class MyPhpFwConf
         self::$BLADE_COMPILED_PATH = BLADE_COMPILED_PATH;
         self::$SITE_KEY = SITE_KEY;
         self::$LOG_FILENAME = LOG_FILENAME;
-
 
 
     }

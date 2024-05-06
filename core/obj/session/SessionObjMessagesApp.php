@@ -39,6 +39,23 @@ class SessionObjMessagesApp
         return $arrMsg;
     }
 
+    /**
+     * Retourn le premier message et le supprime de la liste si $getAndClear est true
+     * @param bool $getAndClear
+     * @return array|null
+     */
+    public function getFirst(bool $getAndClear = true) : ?array {
+        $arrMsg = $this->msgArray;
+
+        $first = ArrayUtils::first($arrMsg);
+        if ($first == null) { return null; }
+
+        if ($getAndClear) {
+            $this->msgArray = ArrayUtils::skip($arrMsg, 1);
+        }
+        return $first;
+    }
+
     public function clear() : void {
         $this->msgArray = [];
     }

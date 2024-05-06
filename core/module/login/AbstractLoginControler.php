@@ -56,7 +56,7 @@ abstract class AbstractLoginControler
                     $potUserName,
                     $potPwd,
                     true,
-                    MyPhpFwConf::$USERNAME_FIELD_NAME
+                    MyPhpFwConf::$USER_USERNAME_FIELD_NAME
 
 
                 );
