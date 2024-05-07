@@ -36,9 +36,8 @@ class ResponseHttp
         };
 
         return $rep;
-
-
     }
+
 
     public static function ResultCodeHttp(int $codeHttp = 200): ResponseHttp
     {
@@ -70,17 +69,55 @@ class ResponseHttp
         };
         return $rep;
     }
-    public static function ResultsBlade($blade, string $tpl, array $tplVars, int $codeHttp = 200, bool $saveToHistory = false): ResponseHttp
+
+    /**
+     * Retourne une réponse HTTP avec un contenu personnalisé
+     *
+     * @param int $codeHttp
+     * @param string|null $contentType
+     * @param ?string[] $headers
+     * @param ?string $content
+     * @return ResponseHttp
+     */
+    public static function ReponseCustom(int $codeHttp = 200, string $contentType=null, array $headers = null, string $content = null): ResponseHttp
+    {
+        $rep = new ResponseHttp();
+        $rep->codeHttp = $codeHttp;
+        if ($contentType != null) {
+            $rep->headers[] = 'Content-Type: ' . $contentType;
+        } else {
+            $rep->headers[] = 'Content-Type: text/html; charset=utf-8';
+        }
+
+        if ($headers != null) {
+            ArrayUtils::addRange($headers, $rep->headers);
+        }
+
+
+        if ($content != null) {
+            $rep->action = function () use ($content) {
+                echo $content;
+            };
+        }
+
+        return $rep;
+    }
+
+
+    public static function ResultsBlade($blade, string $tpl, array $tplVars, int $codeHttp = 200, string $contentType=null ): ResponseHttp
     {
         //$tplVars["tplContent"] = $tpl;
         $mainTpl = "main_tpl";
 
 
         $rep = new ResponseHttp();
-        $rep->isSaveToHistory = $saveToHistory;
-        if ($rep->isSaveToHistory) {
-            $rep->titlePage = ArrayUtils::tryGet('title', $tplVars, null);
+
+        if ($contentType != null) {
+            $rep->headers[] = 'Content-Type: ' . $contentType;
+        } else {
+            $rep->headers[] = 'Content-Type: text/html; charset=utf-8';
         }
+
         $rep->codeHttp = $codeHttp;
         $rep->action = function () use ($blade, $mainTpl, $tpl, $tplVars) {
             echo $blade->run($tpl, $tplVars);
