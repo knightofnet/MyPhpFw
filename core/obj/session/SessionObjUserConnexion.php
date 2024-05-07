@@ -13,7 +13,7 @@ class SessionObjUserConnexion
 {
     use SessionObjUtilsTrait;
 
-    private ?IUserFw $connectedUser;
+    private ?IUserFw $connectedUser = null;
 
     public function __construct(string $varStart)
     {
