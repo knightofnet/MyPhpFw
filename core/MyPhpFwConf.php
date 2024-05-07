@@ -19,6 +19,7 @@ class MyPhpFwConf
     public static ?string $INNER_SITE_NAME = null;
 
     public static ?string $USER_CLASS = null;
+    public static ?string $USER_ID_FIELD_NAME = null;
     public static ?string $USER_USERNAME_FIELD_NAME = null;
     public static ?string $USER_USERAPITOKEN_FIELD_NAME = null;
 
@@ -82,6 +83,18 @@ class MyPhpFwConf
         if (!class_exists(self::$USER_CLASS)) {
             throw new \Exception("La classe " . self::$USER_CLASS . " n'existe pas");
         }
+        if (is_null(self::$USER_ID_FIELD_NAME)) {
+
+            /** @var null|PropertyLinked $propUniqueIdName */
+            $propUniqueIdName = ReflectionUtils::getAnnotationOnMethod(self::$USER_CLASS, "getId", PropertyLinked::class);
+            if (is_null($propUniqueIdName)) {
+                throw new \Exception("USER_ID_FIELD_NAME n'est pas défini dans MyPhpFwConf ou getUsername n'est pas annoté par PropertyLinked dans la classe " . self::$USER_CLASS);
+            }
+
+            self::$USER_ID_FIELD_NAME = $propUniqueIdName->getPropertyName();
+
+        }
+
 
         if (is_null(self::$USER_USERNAME_FIELD_NAME)) {
 
