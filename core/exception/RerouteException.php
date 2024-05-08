@@ -7,7 +7,7 @@ class RerouteException extends \Exception
 
     private string $routeName;
 
-    public function __construct(string $routeName, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $routeName, $message = "", $code = 0, \Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->routeName = $routeName;
