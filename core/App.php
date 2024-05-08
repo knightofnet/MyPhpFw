@@ -323,6 +323,9 @@ class App
             }
 
         } catch (RerouteException $e) {
+            if ($e->getPrevious() != null) {
+                Utils::logError("RerouteException : ", $e->getPrevious());
+            }
             $res = ResponseHttp::RedirectTo(RoutesUtils::getRouteUrl($e->getRouteName()));
             $res->doResponse();
         }
