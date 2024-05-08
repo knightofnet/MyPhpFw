@@ -235,11 +235,15 @@ class ArrayUtils
      *
      * @param array $subArray Le tableau dont les éléments doivent être ajoutés.
      * @param array &$targetArray Le tableau auquel les éléments doivent être ajoutés. Passé par référence.
+     * @param bool $withSourceKeys Indique si les clés du tableau source doivent être conservées. Elles écraseront celles du tableau final.
      */
-    public static function addRange(array $subArray, array &$targetArray)
+    public static function addRange(array $subArray, array &$targetArray, bool $withSourceKeys = false)
     {
-        foreach ($subArray as $elt) {
-            $targetArray[] = $elt;
+        foreach ($subArray as $k=>$elt) {
+            if ($withSourceKeys)
+                $targetArray[$k] = $elt;
+            else
+                $targetArray[] = $elt;
         }
 
     }
