@@ -55,6 +55,23 @@ class RoutesUtils
     }
 
     /**
+     * Détermine si une route est connue
+     * @param string $routeName
+     * @param bool $isSearchGetRoutes
+     * @param bool $isSearchPostRoutes
+     * @return bool
+     */
+    public static function isKnownRoute(string $routeName, bool $isSearchGetRoutes = true, bool $isSearchPostRoutes = false) : bool {
+        if ($isSearchGetRoutes && key_exists($routeName, App::$RoutesGet)) {
+            return true;
+        } else if ($isSearchPostRoutes && key_exists($routeName, App::$RoutesPost)) {
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
      * Obtient l'URL de la route
      *
      * Cette méthode statique est utilisée pour obtenir l'URL de la route.
