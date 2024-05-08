@@ -90,7 +90,7 @@ class ResponseHttp
         }
 
         if ($headers != null) {
-            ArrayUtils::addRange($headers, $rep->headers);
+            ArrayUtils::addRange($headers, $rep->headers, true);
         }
 
 
