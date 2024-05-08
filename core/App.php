@@ -5,6 +5,7 @@ namespace myphpfw\core;
 use ArgumentCountError;
 use Closure as ClosureAlias;
 use Error;
+use myphpfw\core\exception\RerouteException;
 use myphpfw\core\obj\JsonReturnObj;
 use myphpfw\core\obj\ReflectionToCallMethod;
 use myphpfw\core\obj\ResponseHttp;
@@ -321,7 +322,11 @@ class App
                 $res->doResponse();
             }
 
-        } catch (ArgumentCountError $e) {
+        } catch (RerouteException $e) {
+            $res = ResponseHttp::RedirectTo(RoutesUtils::getRouteUrl($e->getRouteName()));
+            $res->doResponse();
+        }
+        catch (ArgumentCountError $e) {
             throw new ArgumentCountError(sprintf(self::$appVerb . " '%s' : pas assez de paramètre fournis", $action), 0, $e);
         }
     }
