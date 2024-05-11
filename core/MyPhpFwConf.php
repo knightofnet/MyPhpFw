@@ -52,10 +52,21 @@ class MyPhpFwConf
             throw new \Exception("La constante SVR_ROOT n'est pas défini");
         }
 
-        self::loadProperties();
+
 
         if ($isLoadFromConstant) {
             self::loadConfFromConstant();
+            self::loadProperties();
+
+            if (!key_exists("USER_ID_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
+                self::$USER_ID_FIELD_NAME = USER_ID_FIELD_NAME;
+            }
+            if (!key_exists("USER_USERNAME_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
+                self::$USER_USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
+            }
+            if (!key_exists("USER_USERAPITOKEN_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
+                self::$USER_USERAPITOKEN_FIELD_NAME = USER_USERAPITOKEN_FIELD_NAME;
+            }
         }
 
         self::verifyConf();
@@ -116,15 +127,7 @@ class MyPhpFwConf
         self::$SITE_NAME = SITE_NAME;
         self::$INNER_SITE_NAME = INNER_SITE_NAME;
         self::$USER_CLASS = USER_CLASS;
-        if (!key_exists("USER_ID_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
-            self::$USER_ID_FIELD_NAME = USER_ID_FIELD_NAME;
-        }
-        if (!key_exists("USER_USERNAME_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
-            self::$USER_USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
-        }
-        if (!key_exists("USER_USERAPITOKEN_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
-            self::$USER_USERAPITOKEN_FIELD_NAME = USER_USERAPITOKEN_FIELD_NAME;
-        }
+
         self::$DBB_NAME = DBB_NAME;
         self::$DBB_USER = DBB_USER;
         self::$DBB_PWD = DBB_PWD;
