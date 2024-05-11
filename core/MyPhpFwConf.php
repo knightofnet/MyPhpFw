@@ -57,16 +57,8 @@ class MyPhpFwConf
         if ($isLoadFromConstant) {
             self::loadConfFromConstant();
             self::loadProperties();
+            self::loadConfFromConstant(1);
 
-            if (!key_exists("USER_ID_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
-                self::$USER_ID_FIELD_NAME = USER_ID_FIELD_NAME;
-            }
-            if (!key_exists("USER_USERNAME_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
-                self::$USER_USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
-            }
-            if (!key_exists("USER_USERAPITOKEN_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
-                self::$USER_USERAPITOKEN_FIELD_NAME = USER_USERAPITOKEN_FIELD_NAME;
-            }
         }
 
         self::verifyConf();
@@ -119,23 +111,35 @@ class MyPhpFwConf
         }
     }
 
-    private static function loadConfFromConstant()
+    private static function loadConfFromConstant(int $part = 0)
     {
-        self::$IS_DEBUG = IS_DEBUG;
-        self::$APP_LOG_LVL = APP_LOG_LVL;
-        self::$URL_ROOT = URL_ROOT;
-        self::$SITE_NAME = SITE_NAME;
-        self::$INNER_SITE_NAME = INNER_SITE_NAME;
-        self::$USER_CLASS = USER_CLASS;
+        if ($part == 0) {
+            self::$IS_DEBUG = self::getContantOrNull("IS_DEBUG");
+            self::$APP_LOG_LVL = self::getContantOrNull("APP_LOG_LVL");
+            self::$URL_ROOT = self::getContantOrNull("URL_ROOT");
+            self::$SITE_NAME = self::getContantOrNull("SITE_NAME");
+            self::$INNER_SITE_NAME = self::getContantOrNull("INNER_SITE_NAME");
+            self::$USER_CLASS = self::getContantOrNull("USER_CLASS");
 
-        self::$DBB_NAME = DBB_NAME;
-        self::$DBB_USER = DBB_USER;
-        self::$DBB_PWD = DBB_PWD;
-        self::$DBB_HOST = DBB_HOST;
-        self::$SITE_PREFIX_URL = SITE_PREFIX_URL;
-        self::$BLADE_COMPILED_PATH = BLADE_COMPILED_PATH;
-        self::$SITE_KEY = SITE_KEY;
-        self::$LOG_FILENAME = LOG_FILENAME;
+            self::$DBB_NAME = self::getContantOrNull("DBB_NAME");
+            self::$DBB_USER = self::getContantOrNull("DBB_USER");
+            self::$DBB_PWD = self::getContantOrNull("DBB_PWD");
+            self::$DBB_HOST = self::getContantOrNull("DBB_HOST");
+            self::$SITE_PREFIX_URL = self::getContantOrNull("SITE_PREFIX_URL");
+            self::$BLADE_COMPILED_PATH = self::getContantOrNull("BLADE_COMPILED_PATH");
+            self::$SITE_KEY = self::getContantOrNull("SITE_KEY");
+            self::$LOG_FILENAME = self::getContantOrNull("LOG_FILENAME");
+        } else if ($part == 1) {
+            if (!in_array("USER_ID_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
+                self::$USER_ID_FIELD_NAME = USER_ID_FIELD_NAME;
+            }
+            if (!in_array("USER_USERNAME_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
+                self::$USER_USERNAME_FIELD_NAME = USERNAME_FIELD_NAME;
+            }
+            if (!in_array("USER_USERAPITOKEN_FIELD_NAME", self::$propertiesLoadedByAnnotation)) {
+                self::$USER_USERAPITOKEN_FIELD_NAME = USER_USERAPITOKEN_FIELD_NAME;
+            }
+        }
 
 
     }
@@ -197,6 +201,14 @@ class MyPhpFwConf
         }
 
 
+    }
+
+    private static function getContantOrNull(string $cstName) : ?string
+    {
+        if (!defined($cstName)) {
+            return null;
+        }
+        return constant($cstName);
     }
 
 }
