@@ -79,6 +79,85 @@ class ReflectionUtils
         return $result;
     }
 
+    /**
+     * Convertit un objet en tableau associatif.
+     * Les propriétés de l'objet sont mappées aux clés du tableau associatif.
+     * Les valeurs des propriétés de l'objet sont mappées aux valeurs du tableau associatif.
+     * Si une propriété de l'objet est un objet, elle est convertie en tableau associatif récursivement.
+     * Si une propriété de l'objet est exclue (présente dans $propertiesNameExcluded),
+     * elle n'est pas mappée au tableau associatif.
+     * Si une exception est levée pendant le processus de conversion, la fonction renvoie un tableau vide.
+     *
+     * @param $obj
+     * @param $propertiesNameExcluded
+     * @return array
+     * @throws \ReflectionException
+     */
+    public static function objectToAssocArray($obj, $propertiesNameExcluded = [])
+    {
+        $reflection = new \ReflectionClass($obj);
+        $properties = $reflection->getProperties();
+
+        /*
+         * Si l'objet est un stdClass, on le convertit en tableau associatif
+         */
+        if ($obj instanceof \stdClass ) {
+            $result = get_object_vars($obj);
+            foreach ($result as $key => $value) {
+                if (in_array($key, $propertiesNameExcluded)) {
+                    unset($result[$key]);
+                    continue;
+                }
+                if (is_object($value)) {
+                    $result[$key] = self::objectToAssocArray($value, $propertiesNameExcluded);
+                }
+            }
+
+            return $result;
+        }
+
+        /*
+         * Si l'objet est une instance d'une classe, on récupère ses propriétés
+         */
+        $result = [];
+
+        /** @var \ReflectionProperty $property */
+        foreach ($properties as $property) {
+            if ($property->isPrivate()) {
+                $property->setAccessible(true);
+            }
+
+            if (in_array($property->getName(), $propertiesNameExcluded)) {
+                continue;
+            }
+
+            $propertyName = $property->getName();
+            $propertyValue = $property->getValue($obj);
+
+            if (is_object($propertyValue)) {
+                $propertyValue = self::objectToAssocArray($propertyValue, $propertiesNameExcluded);
+            }
+
+            $result[$propertyName] = $propertyValue;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Tente d'hydrater une instance de la classe spécifiée à partir d'un objet stdClass.
+     * Les propriétés de l'objet stdClass sont mappées aux propriétés de l'objet de la classe cible.
+     * Si une propriété de l'objet stdClass a le même nom qu'une propriété de l'objet de la classe cible,
+     * la valeur de cette propriété est affectée à la propriété de l'objet de la classe cible.
+     * Si une propriété de l'objet stdClass est exclue (présente dans $propertiesNameExcluded),
+     * elle n'est pas mappée à l'objet de la classe cible.
+     * Si une exception est levée pendant le processus d'hydratation, la fonction renvoie null.
+     *
+     * @param string $className Le nom complet de la classe à instancier.
+     * @param \stdClass $stdClass L'objet stdClass à partir duquel hydrater l'instance de la classe.
+     * @param array $propertiesNameExcluded Les noms des propriétés à exclure lors de l'hydratation.
+     * @return object|null L'instance de la classe hydratée, ou null en cas d'erreur.
+     */
     public static function tryHydrateFrom(string $className, \stdClass $stdClass, $propertiesNameExcluded = [])
     {
         try {
@@ -159,7 +238,7 @@ class ReflectionUtils
     public static function getConstantesOfClass(string $class): array
     {
         // Utilisez la réflexion (ReflectionClass) pour obtenir les constantes de la classe
-        $reflection = new ReflectionClass($class);
+        $reflection = new \ReflectionClass($class);
         $constantes = $reflection->getConstants();
 
         return $constantes;
