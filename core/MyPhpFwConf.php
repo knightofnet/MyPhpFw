@@ -59,6 +59,8 @@ class MyPhpFwConf
             self::loadProperties();
             self::loadConfFromConstant(1);
 
+        } else {
+            self::loadProperties();
         }
 
         self::verifyConf();
