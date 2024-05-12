@@ -258,7 +258,46 @@ class ReflectionUtils
 
         $annotationReader = new AnnotationReader();
         $rf = new \ReflectionMethod($fullClassName, $methodName);
-        return $annotationReader->getMethodAnnotation($rf, $annotationClassName);
+        return $annotationReader-> getMethodAnnotation($rf, $annotationClassName);
+    }
+
+    /**
+     * Obtient une annotation sur une méthode
+     *
+     * @param string $fullClassName
+     * @param string $methodName
+     * @param string $annotationClassName
+     * @return object[]
+     * @throws \ReflectionException
+     */
+    public static function getAnnotationsOnMethod(string $fullClassName, string $methodName, string $annotationClassName): array
+    {
+
+        $annotationReader = new AnnotationReader();
+        $rf = new \ReflectionMethod($fullClassName, $methodName);
+        $annotations = $annotationReader->getMethodAnnotations($rf, $annotationClassName);
+        if ($annotations == null) {
+            return [];
+        }
+        $retArray = [];
+        foreach ($annotations as $annotation) {
+            if (($annotation instanceof $annotationClassName)) {
+                $retArray[] = $annotation;
+            }
+        }
+
+        return $retArray;
+    }
+
+    /**
+     * @param string $className
+     * @return \ReflectionMethod[]
+     * @throws \ReflectionException
+     */
+    public static function getMethods(string $className): array
+    {
+        $reflection = new \ReflectionClass($className);
+        return $reflection->getMethods();
     }
 
 

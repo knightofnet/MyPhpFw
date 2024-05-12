@@ -5,6 +5,7 @@ namespace myphpfw\core\utils;
 use myphpfw\core\App;
 use myphpfw\core\MyPhpFwConf;
 use myphpfw\core\obj\UrlActionRes;
+use myphpfw\core\utils\lang\ReflectionUtils;
 
 class RoutesUtils
 {
@@ -152,6 +153,32 @@ class RoutesUtils
             $mainUrl .= '?' .$strUrlArgs;
         }
         return $mainUrl;
+    }
+
+    private static array $cacheGetApiSignToJsObjProps = [];
+
+    public static function getApiSignToJsObjProps($className, $methodName): string
+    {
+        $key = $className . $methodName;
+        if (key_exists($key, self::$cacheGetApiSignToJsObjProps)) {
+            return self::$cacheGetApiSignToJsObjProps[$key];
+        }
+
+        $params = ReflectionUtils::getAnnotationsOnMethod($className, $methodName, RouteParamData::class);
+        $paramsArray = [];
+        foreach ($params as $param) {
+            if ($param->getParamName() == null) {
+                throw new \Exception("RouteParamData: param name est obligatoire");
+            }
+            $paramsArray[] = $param;
+        }
+        $result = [];
+        foreach ($paramsArray as $param) {
+            $result[] = $param->getParamName() . " : " . $param->getParamName();
+        }
+
+        self::$cacheGetApiSignToJsObjProps[$key] = implode(", ", $result);
+        return self::$cacheGetApiSignToJsObjProps[$key];
     }
 
 }

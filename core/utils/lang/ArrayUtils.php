@@ -177,27 +177,7 @@ class ArrayUtils
      */
     public static function toString($array): string
     {
-        $retStr = "";
-        if (is_string($array)) {
-            return $array;
-        } else if (is_object($array)) {
-            return strval($array);
-        } else if (is_array($array)) {
-
-            foreach ($array as $k => $v) {
-                $retStr .= "\"$k\" => '";
-                if (is_array($v)) {
-                    $retStr .= '[' . self::toString($v) . ']';
-                } else {
-                    $retStr .= $v;
-                }
-
-                $retStr .= "', ";
-            }
-        }
-
-        return $retStr;
-
+        return json_encode($array, JSON_PRETTY_PRINT);
     }
 
     /**
