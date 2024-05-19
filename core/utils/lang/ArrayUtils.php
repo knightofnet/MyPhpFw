@@ -228,5 +228,40 @@ class ArrayUtils
 
     }
 
+    /**
+     * Retourne un tableau contenant les éléments de $arrayA qui ne sont pas présents dans $arrayB.     *
+     *
+     * @param array $arrayA
+     * @param array $arrayB
+     * @param \Closure|null $lambdaEquality Fonction de comparaison personnalisée. Par défaut, la comparaison est faite avec l'opérateur ==.
+     * @return array
+     */
+    public static function diff(array $arrayA, array $arrayB, \Closure $lambdaEquality=null): array
+    {
+        $retArray = [];
+
+        if ($lambdaEquality == null) {
+            $lambdaEquality = function ($a, $b) {
+                return ReflectionUtils::areEquals($a, $b);
+            };
+        }
+
+        foreach ($arrayA as $eltA) {
+            $found = false;
+            foreach ($arrayB as $eltB) {
+                if (call_user_func($lambdaEquality, $eltA, $eltB)) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $retArray[] = $eltA;
+            }
+        }
+
+        return $retArray;
+
+
+    }
 
 }

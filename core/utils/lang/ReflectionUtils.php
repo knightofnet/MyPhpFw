@@ -300,5 +300,29 @@ class ReflectionUtils
         return $reflection->getMethods();
     }
 
+    /**
+     * Test que $a et $b sont égaux, quel que soit leur type (object, array, scalar, etc.)
+     * Si $a et $b sont de types différents, la méthode renvoie false.
+     * @param $a
+     * @param $b
+     * @return bool
+     */
+    public static function areEquals($a, $b) : bool {
+        if (gettype($a) != gettype($b)) {
+            return false;
+        }
+
+        if (is_object($a)) {
+            return $a == $b;
+        }
+
+        if (is_array($a)) {
+            return $a == $b;
+        }
+
+        return $a === $b;
+
+
+    }
 
 }
